@@ -24,7 +24,8 @@ PATH_BACKUPS_IN_YA_DISK = "notion_backups/"
 
 # 1. Создаем бэкап в директории ЯндексДиск 'Yandex.Disk/notion_backups/'
 # - Меняем текущий путь os для того что бы можно было указать верный путь для команды backup_notion
-# os.chdir("/home/vlad")
+os.chdir("/home/vlad")
+# os.chdir("/Users/vladmironov2")
 
 start_time = timer()
 try:
