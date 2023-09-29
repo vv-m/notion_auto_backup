@@ -7,6 +7,7 @@ https://disk.yandex.ru/client/disk/notion_backups
 """
 
 import os
+import sys
 
 from loguru import logger as log
 import yadisk
@@ -15,7 +16,7 @@ from timeit import default_timer as timer
 from datetime import timedelta
 
 from telegram_sender import send_massage_to_admin_telegram
-
+from notion_backup import backup_service
 load_dotenv()
 
 YANDEX_TOKEN = os.getenv("YANDEX_TOKEN")
@@ -27,14 +28,15 @@ PATH_BACKUPS_IN_YA_DISK = "notion_backups/"
 
 start_time = timer()
 try:
-    os.system(f"backup_notion --output-dir='Yandex.Disk/notion_backups' --space-id=e6edf439-211a-49fb-ac9d-8a91d00f7279")
+    backup_service.main(output_dir="Yandex.Disk/notion_backups", space_id="e6edf439-211a-49fb-ac9d-8a91d00f7279")
+    # os.system(f"backup_notion --output-dir='Yandex.Disk/notion_backups' --space-id=e6edf439-211a-49fb-ac9d-8a91d00f7279")
 except Exception as e:
     message_exception = (f"Notion-backups:\n\n"
                          f"❌ Не удалось выгрузить бэкап.\n\n"
                          f"{str(e)}")
     log.debug(message_exception)
     send_massage_to_admin_telegram(message_exception)
-    raise Exception
+    sys.exit()
 
 end_time = timer()
 time_for_backup = str(timedelta(seconds=end_time - start_time))
