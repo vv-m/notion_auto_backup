@@ -23,9 +23,18 @@ PATH_BACKUPS_IN_YA_DISK = "notion_backups/"
 
 # 1. Создаем бэкап в директории ЯндексДиск 'Yandex.Disk/notion_backups/'
 # - Меняем текущий путь os для того что бы можно было указать верный путь для команды backup_notion
-os.chdir("/home/vlad")
+# os.chdir("/home/vlad")
+
 start_time = timer()
-os.system(f"backup_notion --output-dir='Yandex.Disk/notion_backups' --space-id=e6edf439-211a-49fb-ac9d-8a91d00f7279")
+try:
+    os.system(f"backup_notion --output-dir='Yandex.Disk/notion_backups' --space-id=e6edf439-211a-49fb-ac9d-8a91d00f7279")
+except Exception as e:
+    message_exception = (f"Notion-backups:\n\n"
+                         f"❌ Не удалось выгрузить бэкап.\n\n"
+                         f"{str(e)}")
+    log.debug(message_exception)
+    send_massage_to_admin_telegram(message_exception)
+    raise Exception
 
 end_time = timer()
 time_for_backup = str(timedelta(seconds=end_time - start_time))
@@ -71,7 +80,7 @@ try:
 
     message_success = (f"Notion-backups:\n"
                        f"✅ Успешный бэкап.\n"
-                       f"Бэкап создан за {time_for_backup}"
+                       f"Бэкап создан за {time_for_backup}\n"
                        f"Кол-во бэкапов: {qty_backups}"
                        f"{message_remove}")
     log.debug(message_success)
