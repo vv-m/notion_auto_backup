@@ -89,8 +89,9 @@ try:
     message_success = (f"Notion-backups:\n"
                        f"✅ Успешный бэкап.\n"
                        f"Бэкап создан за {time_for_backup}\n"
-                       f"Кол-во бэкапов: {qty_backups}"
-                       f"{message_remove}")
+                       f"Кол-во бэкапов: {qty_backups}\n"
+                       f"{message_remove}\n"
+                       f"https://disk.yandex.ru/client/disk/notion_backups")
     log.debug(message_success)
     send_massage_to_admin_telegram(message_success)
 
