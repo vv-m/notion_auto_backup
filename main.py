@@ -31,6 +31,10 @@ os.chdir("/home/vlad")
 
 start_time = timer()
 try:
+    message_start = (f"Notion-backups:\n\n"
+                     f"🎬 Начинаю загрузку бэкапа.\n\n")
+    log.debug(message_start)
+    send_massage_to_admin_telegram(message_start)
     backup_service.main(output_dir="Yandex.Disk/notion_backups", space_id="e6edf439-211a-49fb-ac9d-8a91d00f7279")
 except Exception as e:
     message_exception = (f"Notion-backups:\n\n"
