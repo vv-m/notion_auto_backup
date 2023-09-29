@@ -4,6 +4,8 @@
 1. ЯндексДиск:
 https://disk.yandex.ru/client/disk/notion_backups
 
+2. Что бы использовать backup_service.main в коде пришлось в библиотеке notion_backup/backup_service.py
+закомментировать 3 строчки.
 """
 
 import os
@@ -30,7 +32,6 @@ os.chdir("/home/vlad")
 start_time = timer()
 try:
     backup_service.main(output_dir="Yandex.Disk/notion_backups", space_id="e6edf439-211a-49fb-ac9d-8a91d00f7279")
-    # os.system(f"backup_notion --output-dir='Yandex.Disk/notion_backups' --space-id=e6edf439-211a-49fb-ac9d-8a91d00f7279")
 except Exception as e:
     message_exception = (f"Notion-backups:\n\n"
                          f"❌ Не удалось выгрузить бэкап.\n\n"
