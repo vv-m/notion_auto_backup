@@ -22,9 +22,10 @@ YANDEX_TOKEN = os.getenv("YANDEX_TOKEN")
 PATH_BACKUPS_IN_YA_DISK = "notion_backups/"
 
 # 1. Создаем бэкап в директории ЯндексДиск 'Yandex.Disk/notion_backups/'
-
+# - Меняем текущий путь os для того что бы можно было указать верный путь для команды backup_notion
+os.chdir("/home/vlad")
 start_time = timer()
-os.system(f"backup_notion --output-dir='Yandex.Disk/notion_backups/' --space-id=e6edf439-211a-49fb-ac9d-8a91d00f7279")
+os.system(f"backup_notion --output-dir='Yandex.Disk/notion_backups' --space-id=e6edf439-211a-49fb-ac9d-8a91d00f7279")
 
 end_time = timer()
 time_for_backup = str(timedelta(seconds=end_time - start_time))
@@ -39,18 +40,21 @@ y = yadisk.YaDisk(token=YANDEX_TOKEN)
 
 # - Проверяем токен ЯндексДиска
 CONNECT_YANDEX = y.check_token()
+
 if CONNECT_YANDEX:
     log.debug("Успешное соединение с ЯндексДиск")
 else:
-    log.debug("Не удалось соединиться с ЯндексДиск")
-    send_massage_to_admin_telegram("Notion-backups:\n\n"
-                                   "❌ Не удалось соединиться с ЯндексДиск")
+    message_connect_success = ("Notion-backups:\n\n"
+                               "❌ Не удалось соединиться с ЯндексДиск")
+    log.debug(message_connect_success)
+    send_massage_to_admin_telegram(message_connect_success)
+
 backups_on_disk = list(y.listdir("notion_backups"))
 
 try:
     # - Определить сколько бэкапов на ЯндексДиск
     qty_backups = len(backups_on_disk)
-
+    message_remove = ''
     # - Если больше 30 бэкапов на ЯндексДиск то удалить самый старый
     if qty_backups > 30:
         list_files = []
@@ -62,10 +66,20 @@ try:
 
         # Удаляем файл
         y.remove(f"{PATH_BACKUPS_IN_YA_DISK}{old_file_name}", permanently=True)
-        send_massage_to_admin_telegram(f"Notion-backups:\n"
-                                       f"✅ Успешный бэкап.\n"
-                                       f"Бэкап создан за {time_for_backup}")
+        message_remove = f"Удален старый бэкап {old_file_name}"
+        log.debug(message_remove)
+
+    message_success = (f"Notion-backups:\n"
+                       f"✅ Успешный бэкап.\n"
+                       f"Бэкап создан за {time_for_backup}"
+                       f"Кол-во бэкапов: {qty_backups}"
+                       f"{message_remove}")
+    log.debug(message_success)
+    send_massage_to_admin_telegram(message_success)
+
 except Exception as e:
-    send_massage_to_admin_telegram(f"Notion-backups:\n\n"
-                                   f"❌ Не удалось выгрузить бэкап.\n\n"
-                                   f"{str(e)}")
+    message_exception = (f"Notion-backups:\n\n"
+                         f"❌ Не удалось выгрузить бэкап.\n\n"
+                         f"{str(e)}")
+    log.debug(message_exception)
+    send_massage_to_admin_telegram(message_exception)
