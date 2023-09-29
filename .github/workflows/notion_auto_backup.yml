@@ -1,0 +1,48 @@
+name: Notion auto backup 🔐
+
+on: [push]
+
+jobs:
+  copy_project:
+    name: Copy project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: copy file via ssh password
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          source: .
+          target: "./notion_auto_backup/notion_auto_backup"
+
+#  deploy:
+#    runs-on: ubuntu-latest
+#    needs: copy_project
+#    steps:
+#      - name: executing remote ssh commands to deploy
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.HOST }}
+#          username: ${{ secrets.USER }}
+#          key: ${{ secrets.SSH_KEY }}
+#          passphrase: ${{ secrets.PASSPHRASE }}
+#          script: |
+#            cd bot_valera_ver_1
+#            sudo docker-compose down
+#            sudo docker rmi -f ${{ secrets.DOCKER_USERNAME }}/bot_valera_ver_1
+#            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/bot_valera_ver_1:latest
+#            sudo docker-compose up -d
+
+  send_message_final:
+      runs-on: ubuntu-latest
+      needs: copy_project
+      steps:
+        - name: send message
+          uses: appleboy/telegram-action@master
+          with:
+            to: ${{ secrets.TELEGRAM_TO }}
+            token: ${{ secrets.TELEGRAM_TOKEN }}
+            message: ${{ github.workflow }} - Успешный деплой!
