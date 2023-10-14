@@ -4,7 +4,7 @@
 1. ЯндексДиск:
 https://disk.yandex.ru/client/disk/notion_backups
 
-2. Что бы использовать backup_service.main в коде пришлось в библиотеке notion_backup/backup_service.py
+2. Что бы использовать backup_service.main в коде - пришлось в библиотеке notion_backup/backup_service.py
 закомментировать 3 строчки.
 """
 
@@ -23,6 +23,8 @@ load_dotenv()
 
 YANDEX_TOKEN = os.getenv("YANDEX_TOKEN")
 PATH_BACKUPS_IN_YA_DISK = "notion_backups/"
+
+log.add("logs.log")
 
 # 1. Создаем бэкап в директории ЯндексДиск 'Yandex.Disk/notion_backups/'
 # - Меняем текущий путь os для того что бы можно было указать верный путь для команды backup_notion
